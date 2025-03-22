@@ -1,0 +1,1 @@
+export { createMainRouter } from './mainRouter';
