@@ -1,7 +1,7 @@
 import { config as configDotenv } from 'dotenv';
 import { Config } from '../types';
 
-const REQUIRED_ENVIRONMENT_VARIABLES = ['CHAT_GPT_KEY'];
+const REQUIRED_ENVIRONMENT_VARIABLES = ['GOOGLE_CLOUD_KEY'];
 
 const checkEnvironmentVariables = (requiredEnvironmentVariables: string[]) => {
     if (requiredEnvironmentVariables.some((variable) => !(variable in process.env))) {
@@ -30,7 +30,7 @@ export const getConfig = (): Config => {
     config = {
         isProductionEnv,
         port: Number(env.PORT) || 3000,
-        chatgptApiKey: env.CHAT_GPT_KEY,
+        googleCloudKey: env.GOOGLE_CLOUD_KEY,
         httpsKey: env.HTTPS_KEY || '',
         httpsCert: env.HTTPS_CERT || '',
     };

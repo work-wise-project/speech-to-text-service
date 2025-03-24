@@ -11,8 +11,9 @@ export const startServer = () => {
 
     app.use('/api', createMainRouter());
 
-    app.use((_err: Error, _req: Request, res: Response, _next: NextFunction) => {
+    app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
         res.status(500).send({ message: 'Internal server error' });
+        console.error(error.message);
     });
 
     const serverToRun = isProductionEnv ? createHttpsServer({ key: httpsKey, cert: httpsCert }, app) : app;

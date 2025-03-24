@@ -1,7 +1,7 @@
 export type Config = {
     isProductionEnv: boolean;
     port: number;
-    chatgptApiKey: string;
+    googleCloudKey: string;
     httpsKey: string;
     httpsCert: string;
 };
