@@ -1,5 +1,6 @@
 import { SpeechClient } from '@google-cloud/speech';
 import { Storage } from '@google-cloud/storage';
+import { formatTranscriptions, getAudioConfig } from '../utils';
 import { getConfig } from './config';
 
 const BUCKET_NAME = 'work_wise_audio_files';
@@ -18,32 +19,22 @@ export const getGoogleCloudClient = () => {
     }
 
     return {
-        transcript: async (fileLocation: string) => {
-            const fileName = fileLocation.split('\\').pop();
+        transcript: async (filePath: string) => {
+            const fileName = filePath.split('\\').pop();
             if (!fileName) {
                 throw new Error('file name not found');
             }
 
-            await storage.bucket(BUCKET_NAME).upload(fileLocation, { destination: fileName });
+            await storage.bucket(BUCKET_NAME).upload(filePath, { destination: fileName });
             console.log('file uploaded to Cloud Storage');
 
             const [operation] = await client.longRunningRecognize({
                 audio: { uri: `gs://${BUCKET_NAME}/${fileName}` },
-                config: {
-                    model: 'latest_long',
-                    encoding: 'MP3',
-                    sampleRateHertz: 44100,
-                    audioChannelCount: 2,
-                    enableWordTimeOffsets: true,
-                    enableAutomaticPunctuation: true,
-                    enableWordConfidence: true,
-                    enableSpokenPunctuation: { value: true },
-                    languageCode: 'en-US',
-                },
+                config: await getAudioConfig(filePath),
             });
             const [response] = await operation.promise();
 
-            return (response.results || []).map((result) => result?.alternatives?.[0].transcript).join('\n');
+            return formatTranscriptions(response.results || []);
         },
     };
 };

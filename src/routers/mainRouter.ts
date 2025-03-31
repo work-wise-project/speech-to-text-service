@@ -34,7 +34,7 @@ export const createMainRouter = () => {
         console.log('file deleted');
 
         res.status(200).send({ transcription });
-        console.log(`finished transcription, got ${transcription.length} characters`);
+        console.log(`finished transcription`);
     });
 
     return router;
