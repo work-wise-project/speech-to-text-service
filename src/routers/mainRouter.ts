@@ -22,7 +22,7 @@ const upload = multer({ storage });
 export const createMainRouter = () => {
     const router = Router();
 
-    router.get('/transcript', upload.single('file'), async (req, res) => {
+    router.post('/transcript', upload.single('file'), async (req, res) => {
         if (!req.file) {
             res.status(400).send('No file uploaded');
             return;
