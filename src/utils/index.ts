@@ -1,2 +1,2 @@
 export { getAudioConfig } from './audioFile';
-export { formatTranscriptions } from './formatTranscription';
+export { formatTranscript } from './formatTranscript';
