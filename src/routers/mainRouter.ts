@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { unlink } from 'fs/promises';
 import multer from 'multer';
 import { getGoogleCloudClient } from '../services';
+import { preprocessAudio } from '../utils';
 
 const storage = multer.diskStorage({
     destination: (_req, _file, callback) => {
@@ -11,8 +11,7 @@ const storage = multer.diskStorage({
         const fileType = file.originalname.split('.').filter(Boolean).slice(1).join('.');
         const filename = `${file.originalname.split('.')[0]}.${fileType}`;
 
-        console.log('Original filename:', file.originalname);
-        console.log('Filename:', filename);
+        console.log('filename:', filename);
 
         callback(null, filename);
     },
@@ -28,13 +27,12 @@ export const createMainRouter = () => {
             return;
         }
 
-        const transcript = await getGoogleCloudClient().transcription(req.file.path);
+        const processedFilePath = await preprocessAudio(req.file.path);
 
-        await unlink(req.file.path);
-        console.log('file deleted');
+        const { transcript, time } = await getGoogleCloudClient().transcription(processedFilePath);
 
         res.status(200).send({ transcript });
-        console.log(`finished transcript`);
+        console.log(`finished transcript in ${time}ms`);
     });
 
     return router;

@@ -1,6 +1,7 @@
 import { SpeechClient } from '@google-cloud/speech';
 import { Storage } from '@google-cloud/storage';
-import { formatTranscript, getAudioConfig } from '../utils';
+import { unlink } from 'fs/promises';
+import { AUDIO_CONFIG, formatTranscript } from '../utils';
 import { getConfig } from './config';
 
 const BUCKET_NAME = 'work_wise_audio_files';
@@ -28,13 +29,18 @@ export const getGoogleCloudClient = () => {
             await storage.bucket(BUCKET_NAME).upload(filePath, { destination: fileName });
             console.log('file uploaded to Cloud Storage');
 
+            await unlink(filePath);
+            console.log('file deleted from local storage');
+
+            const startTime = new Date().getTime();
             const [operation] = await client.longRunningRecognize({
                 audio: { uri: `gs://${BUCKET_NAME}/${fileName}` },
-                config: await getAudioConfig(filePath),
+                config: AUDIO_CONFIG,
             });
             const [response] = await operation.promise();
+            const endTime = new Date().getTime();
 
-            return formatTranscript(response.results || []);
+            return { transcript: formatTranscript(response.results || []), time: endTime - startTime };
         },
     };
 };
