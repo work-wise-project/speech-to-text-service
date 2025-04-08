@@ -1,6 +1,6 @@
 import { SpeechClient } from '@google-cloud/speech';
 import { Storage } from '@google-cloud/storage';
-import { formatTranscriptions, getAudioConfig } from '../utils';
+import { formatTranscript, getAudioConfig } from '../utils';
 import { getConfig } from './config';
 
 const BUCKET_NAME = 'work_wise_audio_files';
@@ -19,7 +19,7 @@ export const getGoogleCloudClient = () => {
     }
 
     return {
-        transcript: async (filePath: string) => {
+        transcription: async (filePath: string) => {
             const fileName = filePath.split('\\').pop();
             if (!fileName) {
                 throw new Error('file name not found');
@@ -34,7 +34,7 @@ export const getGoogleCloudClient = () => {
             });
             const [response] = await operation.promise();
 
-            return formatTranscriptions(response.results || []);
+            return formatTranscript(response.results || []);
         },
     };
 };

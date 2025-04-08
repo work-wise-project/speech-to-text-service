@@ -28,13 +28,13 @@ export const createMainRouter = () => {
             return;
         }
 
-        const transcription = await getGoogleCloudClient().transcript(req.file.path);
+        const transcript = await getGoogleCloudClient().transcription(req.file.path);
 
         await unlink(req.file.path);
         console.log('file deleted');
 
-        res.status(200).send({ transcription });
-        console.log(`finished transcription`);
+        res.status(200).send({ transcript });
+        console.log(`finished transcript`);
     });
 
     return router;

@@ -1,5 +1,5 @@
 import { google } from '@google-cloud/speech/build/protos/protos';
-import { FormattedTranscription } from '../types';
+import { FormattedTranscript } from '../types';
 
 const padTime = (time: number) => time.toString().padStart(2, '0');
 
@@ -12,8 +12,8 @@ const formatTime = (seconds: number, nanos: number): string => {
     return `${hours}:${minutes}:${formattedSeconds}`;
 };
 
-export const formatTranscriptions = (transcription: google.cloud.speech.v1.ISpeechRecognitionResult[]) =>
-    transcription
+export const formatTranscript = (transcript: google.cloud.speech.v1.ISpeechRecognitionResult[]) =>
+    transcript
         .map(({ alternatives }) => alternatives?.[0] as google.cloud.speech.v1.ISpeechRecognitionAlternative)
         .filter((alternative) => !!alternative && 'transcript' in alternative)
         .map(({ confidence, transcript, words }) => {
@@ -38,4 +38,4 @@ export const formatTranscriptions = (transcription: google.cloud.speech.v1.ISpee
                 text: transcript.trim(),
             };
         })
-        .filter(Boolean) as FormattedTranscription[];
+        .filter(Boolean) as FormattedTranscript[];

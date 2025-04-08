@@ -1,2 +1,2 @@
 export { Config } from './config';
-export { FormattedTranscription } from './formattedTranscription';
+export { FormattedTranscript } from './formattedTranscript';
