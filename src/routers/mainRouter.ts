@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { getGoogleCloudClient } from '../services';
+import { getSpeechClient, getVertexAIClient } from '../services';
 import { preprocessAudio } from '../utils';
 
 const storage = multer.diskStorage({
@@ -29,10 +29,10 @@ export const createMainRouter = () => {
 
         const processedFilePath = await preprocessAudio(req.file.path);
 
-        const { transcript, time } = await getGoogleCloudClient().transcription(processedFilePath);
+        const transcript = await getSpeechClient().transcription(processedFilePath);
+        const refinedTranscript = await getVertexAIClient().refineTranscript(transcript);
 
-        res.status(200).send({ transcript });
-        console.log(`finished transcript in ${time}ms`);
+        res.status(200).send({ transcript: refinedTranscript });
     });
 
     return router;
