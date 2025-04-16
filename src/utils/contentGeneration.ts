@@ -19,6 +19,7 @@ You must:
 3. Verify sentence boundaries, split sentences if it's necessary, the goal is that each object will represent one sentence.
 4. Do not invent dialogue. Only work with what’s in the transcript.
 5. Maintain a natural, professional tone.
+6. Try to identify the interviewer's questions and the candidate's answers, and separate them if necessary (according to the rules specified before).
 
 The output must follow the following rules:
 1. Be in the same format as the input, with a property called "speaker" containing the speaker tag.
