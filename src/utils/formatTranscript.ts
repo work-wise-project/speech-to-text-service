@@ -1,9 +1,8 @@
-import { google } from '@google-cloud/speech/build/protos/protos';
-import { FormattedTranscript } from '../types';
+import { Duration, FormattedTranscript, Sentence, SpeechRecognitionResult } from '../types';
 
 const padTime = (time: number) => time.toString().padStart(2, '0');
 
-const formatTime = (seconds: number, nanos: number): string => {
+const formatTime = (seconds: number, nanos: number) => {
     const totalSeconds = seconds + nanos / 1e9;
     const hours = padTime(Math.floor(totalSeconds / 3600));
     const minutes = padTime(Math.floor((totalSeconds % 3600) / 60));
@@ -12,30 +11,23 @@ const formatTime = (seconds: number, nanos: number): string => {
     return `${hours}:${minutes}:${formattedSeconds}`;
 };
 
-export const formatTranscript = (transcript: google.cloud.speech.v1.ISpeechRecognitionResult[]) =>
-    transcript
-        .map(({ alternatives }) => alternatives?.[0] as google.cloud.speech.v1.ISpeechRecognitionAlternative)
-        .filter((alternative) => !!alternative && 'transcript' in alternative)
-        .map(({ confidence, transcript, words }) => {
-            if (!confidence || !transcript || !words) {
-                return null;
-            }
+const formatDuration = (duration?: Duration | null) =>
+    !!duration ? formatTime(Number(duration.seconds || 0), Number(duration.nanos || 0)) : '';
 
-            const startWordDuration = words[0].startTime;
-            const endWordDuration = words[words.length - 1].endTime;
+const formatSentence = ({ confidence, transcript, words }: Sentence): FormattedTranscript => {
+    const firstWord = words[0];
+    const lastWord = words[words.length - 1];
 
-            if (!startWordDuration || !endWordDuration) {
-                return null;
-            }
+    return {
+        time: `${formatDuration(firstWord.startTime)} - ${formatDuration(lastWord.endTime)}`,
+        confidence: Math.round(confidence * 100) / 100,
+        text: transcript.trim(),
+    };
+};
 
-            const startTime = formatTime(Number(startWordDuration.seconds || 0), startWordDuration.nanos || 0);
-            const endTime = formatTime(Number(endWordDuration.seconds || 0), endWordDuration.nanos || 0);
-            const timeRange = `${startTime} - ${endTime}`;
-
-            return {
-                time: timeRange,
-                confidence: Math.round(confidence * 100) / 100,
-                text: transcript.trim(),
-            };
-        })
-        .filter(Boolean) as FormattedTranscript[];
+export const formatTranscript = (results: SpeechRecognitionResult[]): FormattedTranscript[] =>
+    results
+        .flatMap((result) => result.alternatives?.[0] || null)
+        .filter((sentence) => !!sentence)
+        .filter((sentence): sentence is Sentence => !!sentence.confidence && !!sentence.transcript && !!sentence.words)
+        .map(formatSentence);

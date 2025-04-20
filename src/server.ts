@@ -13,7 +13,7 @@ export const startServer = () => {
 
     app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
         res.status(500).send({ message: 'Internal server error' });
-        console.error(error.message);
+        console.log(error.message);
     });
 
     const serverToRun = isProductionEnv ? createHttpsServer({ key: httpsKey, cert: httpsCert }, app) : app;

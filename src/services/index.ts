@@ -1,2 +1,4 @@
 export { getConfig } from './config';
-export { getGoogleCloudClient } from './speechToText';
+export { getSpeechClient } from './speechToText';
+export { getStorageClient } from './storage';
+export { getVertexAIClient } from './vertexAI';
