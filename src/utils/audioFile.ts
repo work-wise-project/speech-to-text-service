@@ -3,6 +3,10 @@ import { unlink } from 'fs/promises';
 import path from 'path';
 import util from 'util';
 import { RecognitionConfig } from '../types';
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 
 export const AUDIO_CONFIG: RecognitionConfig = {
     model: 'latest_long',
@@ -15,26 +19,28 @@ export const AUDIO_CONFIG: RecognitionConfig = {
     enableWordConfidence: true,
 };
 
-export const preprocessAudio = async (filePath: string) => {
+export const preprocessAudio = async (filePath: string): Promise<string> => {
     const folder = path.dirname(filePath);
     const baseName = path.basename(filePath, path.extname(filePath));
     const wavPath = path.join(folder, `${baseName}.wav`);
 
-    const command = [
-        'ffmpeg -y',
-        `-i "${filePath}"`, // input MP3 file
-        '-ac 1', // mono
-        '-ar 16000', // 16kHz
-        '-sample_fmt s16', // 16-bit PCM
-        `"${wavPath}"`, // output WAV file
-    ].join(' ');
-
-    try {
-        await util.promisify(exec)(command);
-        await unlink(filePath);
-
-        return wavPath;
-    } catch (error) {
-        throw new Error(`Audio conversion failed: ${error}`);
-    }
+    return new Promise((resolve, reject) => {
+        ffmpeg(filePath)
+            .audioChannels(1)
+            .audioFrequency(16000)
+            .audioCodec('pcm_s16le')
+            .format('wav')
+            .on('end', async () => {
+                try {
+                    await unlink(filePath);
+                    resolve(wavPath);
+                } catch (unlinkErr) {
+                    reject(new Error(`File converted but failed to delete original: ${unlinkErr}`));
+                }
+            })
+            .on('error', (err) => {
+                reject(new Error(`Audio conversion failed: ${err.message}`));
+            })
+            .save(wavPath);
+    });
 };
