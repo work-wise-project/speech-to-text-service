@@ -18,12 +18,12 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Images
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/work-wise-stt ./speech-to-text-service
+          docker build -t ${{ vars.DOCKER_USERNAME }}/work-wise-stt ./
           docker push ${{ secrets.DOCKER_USERNAME }}/work-wise-stt
   # deploy:
   #   runs-on: ubuntu-latest
