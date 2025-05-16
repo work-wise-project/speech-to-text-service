@@ -1,10 +1,8 @@
-import { exec } from 'child_process';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
 import { unlink } from 'fs/promises';
 import path from 'path';
-import util from 'util';
 import { RecognitionConfig } from '../types';
-import ffmpeg from 'fluent-ffmpeg';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 
 ffmpeg.setFfmpegPath(ffmpegInstaller.path);
 

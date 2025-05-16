@@ -1,4 +1,3 @@
-# Base image
 FROM node:22.11.0-slim
 
 WORKDIR /speech-to-text-service
