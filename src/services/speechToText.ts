@@ -3,7 +3,7 @@ import { AUDIO_CONFIG, formatTranscript, measureTime } from '../utils';
 import { getConfig } from './config';
 import { getStorageClient } from './storage';
 
-const { googleCloudKey, googleStorageBucket, googleProjectId } = getConfig();
+const { googleCloudKey, googleStorageBucket, googleProjectId, isProductionEnv } = getConfig();
 
 let client: SpeechClient;
 
@@ -14,7 +14,7 @@ export const getSpeechClient = () => {
 
     return {
         transcription: async (filePath: string) => {
-            const fileName = filePath.split('/').pop();
+            const fileName = filePath.split(isProductionEnv ? '/' : '\\').pop();
             if (!fileName) {
                 throw new Error('file name not found');
             }
