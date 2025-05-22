@@ -31,4 +31,4 @@ jobs:
     steps:
       - name: Trigger Deployment
         run: |
-          curl --fail -X POST http://${{ vars.DEPLOY_API_URL }}/deploy -H "Authorization: Bearer ${{ secrets.DEPLOY_API_TOKEN }}"
+          curl --fail -X POST ${{ vars.DEPLOY_API_URL }} -H "Authorization: Bearer ${{ secrets.DEPLOY_API_TOKEN }}"
