@@ -14,7 +14,7 @@ export const getSpeechClient = () => {
 
     return {
         transcription: async (filePath: string) => {
-            const fileName = filePath.split('\\').pop();
+            const fileName = filePath.split('/').pop();
             if (!fileName) {
                 throw new Error('file name not found');
             }
