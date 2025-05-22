@@ -19,6 +19,8 @@ export const getSpeechClient = () => {
                 throw new Error('file name not found');
             }
 
+            console.log('filename:', fileName);
+
             await getStorageClient().uploadFile(filePath, fileName);
 
             const [response] = await measureTime('transcription', async () => {
