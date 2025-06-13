@@ -27,7 +27,7 @@ jobs:
           docker push ${{ vars.DOCKER_USERNAME }}/work-wise-stt
 
   deploy:
-    runs-on: ['self-hosted', 'work-wise-runner']
+    runs-on: ['self-hosted', 'work-wise']
     needs: build-image
     steps:
       - name: Trigger Deployment
