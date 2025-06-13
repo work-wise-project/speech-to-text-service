@@ -31,6 +31,6 @@ jobs:
     steps:
       - name: Show public IP
         run: curl https://ifconfig.me
-      # - name: Trigger Deployment
-      #   run: |
-      #     curl --fail -X POST ${{ vars.DEPLOY_API_URL }} -H "Authorization: Bearer ${{ secrets.DEPLOY_API_TOKEN }}"
+      - name: Trigger Deployment
+        run: |
+          curl --fail -X POST ${{ vars.DEPLOY_API_URL }} -H "Authorization: Bearer ${{ secrets.DEPLOY_API_TOKEN }}"
