@@ -25,10 +25,10 @@ jobs:
         run: |
           docker build -t ${{ vars.DOCKER_USERNAME }}/work-wise-stt ./
           docker push ${{ vars.DOCKER_USERNAME }}/work-wise-stt
-  deploy:
-    runs-on: [self-hosted, Linux, X64, work-wise]
-    needs: build-image
-    steps:
-      - name: Trigger Deployment
-        run: |
-          curl --fail -X POST ${{ vars.DEPLOY_API_URL }} -H "Authorization: Bearer ${{ secrets.DEPLOY_API_TOKEN }}"
+  # deploy:
+  #   runs-on: [self-hosted, Linux, X64, work-wise]
+  #   needs: build-image
+  #   steps:
+  #     - name: Trigger Deployment
+  #       run: |
+  #         curl --fail -X POST ${{ vars.DEPLOY_API_URL }} -H "Authorization: Bearer ${{ secrets.DEPLOY_API_TOKEN }}"
