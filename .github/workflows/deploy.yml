@@ -26,11 +26,9 @@ jobs:
           docker build -t ${{ vars.DOCKER_USERNAME }}/work-wise-stt ./
           docker push ${{ vars.DOCKER_USERNAME }}/work-wise-stt
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ['self-hosted', 'work-wise-runner']
     needs: build-image
     steps:
-      - name: Show public IP
-        run: curl https://ifconfig.me
       - name: Trigger Deployment
         run: |
           curl --fail -X POST ${{ vars.DEPLOY_API_URL }} -H "Authorization: Bearer ${{ secrets.DEPLOY_API_TOKEN }}"
